@@ -31,6 +31,7 @@ i386_init(void)
 	// Lab 2 memory management initialization functions
 	mem_init();
 
+// <<<<<<< HEAD
 	// Lab 3 user environment initialization functions
 	env_init();
 	trap_init();
@@ -45,6 +46,23 @@ i386_init(void)
 
 	// We only have one user environment for now, so just run it.
 	env_run(&envs[0]);
+// =======
+	// lab 1 exercise 8 -- Add by AT_
+#if 0
+	do {
+		cprintf("[Hello] I\'m AT!\n");
+
+		unsigned int i = 0x00646c72;
+		cprintf("H%x Wo%s\n", 57616, &i);
+		cprintf("x = %d, y = %d\n", 3);
+		cprintf("[World]\n");
+	} while (0);
+#endif
+
+	// Drop into the kernel monitor.
+	while (1)
+		monitor(NULL);
+// >>>>>>> lab2
 }
 
 
