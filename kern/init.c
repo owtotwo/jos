@@ -57,12 +57,12 @@ i386_init(void)
 		cprintf("x = %d, y = %d\n", 3);
 		cprintf("[World]\n");
 	} while (0);
-#endif
 
 	// Drop into the kernel monitor.
 	while (1)
 		monitor(NULL);
 // >>>>>>> lab2
+#endif
 }
 
 

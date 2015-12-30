@@ -100,25 +100,11 @@ boot_alloc(uint32_t n)
 	//
 	// LAB 2: Your code here.
 	/********************* Coding **************************/
-#if 0
-	cprintf("boot_alloc memory at %08x\n", nextfree);
-	if ((int) nextfree >= KSTACKTOP) return NULL;
-	if (n != 0) {
-		char *temp = nextfree;
-		nextfree = ROUNDUP((char *) (nextfree + n), PGSIZE);
-		cprintf("the next memory *nextfree at %08x\n", nextfree);
-		return temp;
-	} else return nextfree;
 
-	return NULL;
-#endif	// old
-
-#if 1
 	result = nextfree;
     nextfree += ROUNDUP(n, PGSIZE);
 
 	return result;
-#endif // new
 
 }
 
@@ -167,13 +153,18 @@ mem_init(void)
 	// Your code goes here:
 	/********************* Coding **************************/
 
-	pages = (struct PageInfo*)boot_alloc(npages * sizeof(struct PageInfo));
-	memset(pages, 0, npages * sizeof(struct PageInfo));
+	uint32_t pages_size_tmp = ROUNDUP(npages * sizeof(struct PageInfo), PGSIZE);
+	pages = (struct PageInfo *)boot_alloc(pages_size_tmp);
+	memset(pages, 0, pages_size_tmp);
 
 
 	//////////////////////////////////////////////////////////////////////
 	// Make 'envs' point to an array of size 'NENV' of 'struct Env'.
 	// LAB 3: Your code here.
+
+	uint32_t envs_size_tmp = ROUNDUP(NENV * sizeof(struct Env), PGSIZE);
+	envs = (struct Env *) boot_alloc(envs_size_tmp);
+	memset(envs, 0, envs_size_tmp);
 
 	//////////////////////////////////////////////////////////////////////
 	// Now that we've allocated the initial kernel data structures, we set
@@ -213,6 +204,12 @@ mem_init(void)
 	//    - the new image at UENVS  -- kernel R, user R
 	//    - envs itself -- kernel RW, user NONE
 	// LAB 3: Your code here.
+
+	boot_map_region(kern_pgdir,
+					UENVS,
+					ROUNDUP(NENV * sizeof(struct Env), PGSIZE),
+					PADDR(envs),
+					(PTE_U | PTE_P));
 
 	//////////////////////////////////////////////////////////////////////
 	// Use the physical memory that 'bootstack' refers to as the kernel
